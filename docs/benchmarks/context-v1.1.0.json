@@ -1,0 +1,286 @@
+{
+  "baseline": "v1.0.0 @ 29dc7a762e9cfca7cbb48bc2ed6b08f70c7ceae5",
+  "version": "1.1.0",
+  "static": {
+    "v1.0.0": {
+      "routing_description": {
+        "bytes": 497,
+        "tokens": {
+          "cl100k_base": 133,
+          "o200k_base": 114
+        }
+      },
+      "skill_file": {
+        "bytes": 6356,
+        "tokens": {
+          "cl100k_base": 1405,
+          "o200k_base": 1369
+        }
+      },
+      "project_entry": {
+        "bytes": 665,
+        "tokens": {
+          "cl100k_base": 218,
+          "o200k_base": 167
+        }
+      }
+    },
+    "v1.1.0": {
+      "routing_description": {
+        "bytes": 272,
+        "tokens": {
+          "cl100k_base": 57,
+          "o200k_base": 56
+        }
+      },
+      "skill_file": {
+        "bytes": 2804,
+        "tokens": {
+          "cl100k_base": 642,
+          "o200k_base": 638
+        }
+      },
+      "project_entry": {
+        "bytes": 338,
+        "tokens": {
+          "cl100k_base": 74,
+          "o200k_base": 74
+        }
+      }
+    }
+  },
+  "scenarios": {
+    "compare_three_checked_candidates": {
+      "v1.0.0": {
+        "cli_calls": 4,
+        "input_bytes": 355,
+        "output_bytes": 3078,
+        "tokens": {
+          "cl100k_base": {
+            "input": 126,
+            "output": 1017,
+            "visible_total": 1143
+          },
+          "o200k_base": {
+            "input": 127,
+            "output": 992,
+            "visible_total": 1119
+          }
+        }
+      },
+      "v1.1.0": {
+        "cli_calls": 1,
+        "input_bytes": 40,
+        "output_bytes": 640,
+        "tokens": {
+          "cl100k_base": {
+            "input": 12,
+            "output": 193,
+            "visible_total": 205
+          },
+          "o200k_base": {
+            "input": 12,
+            "output": 180,
+            "visible_total": 192
+          }
+        }
+      },
+      "output_byte_reduction_pct": 79.21
+    },
+    "known_asset": {
+      "v1.0.0": {
+        "cli_calls": 1,
+        "input_bytes": 95,
+        "output_bytes": 758,
+        "tokens": {
+          "cl100k_base": {
+            "input": 37,
+            "output": 239,
+            "visible_total": 276
+          },
+          "o200k_base": {
+            "input": 38,
+            "output": 234,
+            "visible_total": 272
+          }
+        }
+      },
+      "v1.1.0": {
+        "cli_calls": 1,
+        "input_bytes": 34,
+        "output_bytes": 216,
+        "tokens": {
+          "cl100k_base": {
+            "input": 14,
+            "output": 67,
+            "visible_total": 81
+          },
+          "o200k_base": {
+            "input": 14,
+            "output": 62,
+            "visible_total": 76
+          }
+        }
+      },
+      "output_byte_reduction_pct": 71.5
+    },
+    "no_match": {
+      "v1.0.0": {
+        "cli_calls": 1,
+        "input_bytes": 73,
+        "output_bytes": 230,
+        "tokens": {
+          "cl100k_base": {
+            "input": 16,
+            "output": 71,
+            "visible_total": 87
+          },
+          "o200k_base": {
+            "input": 16,
+            "output": 71,
+            "visible_total": 87
+          }
+        }
+      },
+      "v1.1.0": {
+        "cli_calls": 1,
+        "input_bytes": 43,
+        "output_bytes": 23,
+        "tokens": {
+          "cl100k_base": {
+            "input": 9,
+            "output": 9,
+            "visible_total": 18
+          },
+          "o200k_base": {
+            "input": 9,
+            "output": 8,
+            "visible_total": 17
+          }
+        }
+      },
+      "output_byte_reduction_pct": 90.0
+    },
+    "capture_one": {
+      "v1.0.0": {
+        "cli_calls": 1,
+        "input_bytes": 86,
+        "output_bytes": 448,
+        "tokens": {
+          "cl100k_base": {
+            "input": 22,
+            "output": 154,
+            "visible_total": 176
+          },
+          "o200k_base": {
+            "input": 22,
+            "output": 154,
+            "visible_total": 176
+          }
+        }
+      },
+      "v1.1.0": {
+        "cli_calls": 1,
+        "input_bytes": 52,
+        "output_bytes": 78,
+        "tokens": {
+          "cl100k_base": {
+            "input": 15,
+            "output": 25,
+            "visible_total": 40
+          },
+          "o200k_base": {
+            "input": 15,
+            "output": 25,
+            "visible_total": 40
+          }
+        }
+      },
+      "output_byte_reduction_pct": 82.59
+    },
+    "capture_batch20": {
+      "v1.0.0": {
+        "cli_calls": 1,
+        "input_bytes": 1071,
+        "output_bytes": 5303,
+        "tokens": {
+          "cl100k_base": {
+            "input": 379,
+            "output": 2006,
+            "visible_total": 2385
+          },
+          "o200k_base": {
+            "input": 359,
+            "output": 2011,
+            "visible_total": 2370
+          }
+        }
+      },
+      "v1.1.0": {
+        "cli_calls": 1,
+        "input_bytes": 1037,
+        "output_bytes": 54,
+        "tokens": {
+          "cl100k_base": {
+            "input": 372,
+            "output": 23,
+            "visible_total": 395
+          },
+          "o200k_base": {
+            "input": 352,
+            "output": 23,
+            "visible_total": 375
+          }
+        }
+      },
+      "output_byte_reduction_pct": 98.98
+    },
+    "unchanged_batch20": {
+      "v1.0.0": {
+        "cli_calls": 1,
+        "input_bytes": 1071,
+        "output_bytes": 4352,
+        "tokens": {
+          "cl100k_base": {
+            "input": 379,
+            "output": 1686,
+            "visible_total": 2065
+          },
+          "o200k_base": {
+            "input": 359,
+            "output": 1691,
+            "visible_total": 2050
+          }
+        }
+      },
+      "v1.1.0": {
+        "cli_calls": 1,
+        "input_bytes": 1037,
+        "output_bytes": 56,
+        "tokens": {
+          "cl100k_base": {
+            "input": 372,
+            "output": 22,
+            "visible_total": 394
+          },
+          "o200k_base": {
+            "input": 352,
+            "output": 22,
+            "visible_total": 374
+          }
+        }
+      },
+      "output_byte_reduction_pct": 98.71
+    }
+  },
+  "scope": "Fixed CLI transcripts with synthetic assets, not live LLM tasks. Input includes command text and JSONL batch content; output is actual stdout. Static text is reported separately, not counted twice. Setup excluded. Counts exclude tool/chat wrappers, reasoning, model output, cache pricing and repeated history replay. CLI calls are not necessarily model turns; a host may group commands. Batch task requires acknowledgement, not every ID. Two tiktoken encodings are reference measurements, not Claude or a universal tokenizer.",
+  "measurement": {
+    "code_commit": "e7d45348f5647d7ccf4d3203b12f963bf539af8a",
+    "workflow_run": 35989384199,
+    "job": 107599559603,
+    "python": "3.13.15",
+    "platform": "Linux",
+    "tiktoken": "0.12.0",
+    "observed_at": "2026-09-24T10:48:57Z"
+  }
+}
