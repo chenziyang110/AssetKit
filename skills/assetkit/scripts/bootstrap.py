@@ -17,6 +17,7 @@ from typing import Any
 # Import shared helpers without creating __pycache__ in the installed package.
 sys.dont_write_bytecode = True
 from install import SOURCE, atomic_write, merge_block, safe_path
+import launcher
 
 ENTRIES = {
     "AGENTS.md": ("AGENTS.md",),
@@ -52,6 +53,9 @@ def bootstrap(args: argparse.Namespace) -> dict[str, Any]:
         updated = merge_block(previous.decode("utf-8"), body, start, end).encode("utf-8")
         if previous != updated:
             updates[path] = updated
+    command = launcher.plan(root, skill_path)
+    if command:
+        updates[command[0]] = command[1]
     result: dict[str, Any] = {
         "ok": True, "dry_run": args.dry_run, "project": str(root),
         "skill_path": skill_path, "copy_count": 0,

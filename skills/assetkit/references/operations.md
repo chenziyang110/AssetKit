@@ -1,6 +1,6 @@
 # 登记、更新、审核与版本
 
-> 1.0 日常路径：优先 `find → resolve → capture`，参见 [快速流程](workflows.md)。下文的 `search/add` 是保留的低层操作。原生工程路径优先于受管导出命名规则；capture 默认原位登记。
+> 1.1 日常使用 `python .assets/ak.py find/get/put`，参见 [低上下文接口](agent-api.md)。下文的 `search/add/refresh` 是保留的低层操作。原生工程路径优先于受管导出命名规则；capture/put 默认原位登记。
 
 
 `.assets/records/<id>.json` 是元数据事实源；`.assets/cache/catalog.sqlite` 可删除重建。
@@ -42,4 +42,4 @@ live 不代表可复现历史快照；需固定交付时另建 snapshot。
 
 `revision` 是卡片修改次数，不是内容版本。冲突时重读该卡片，重新判断补丁，不盲目重试旧结论。
 `derived_from` 表示派生，`depends_on` 表示依赖，`supersedes` 表示替代；目标须存在且不能是自身。
-当前工具不做关系环检测，也不自动停用被替代项。
+1.1 的使用检查会有界遍历 depends_on 并检测环；不会自动停用被替代项。

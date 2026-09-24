@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.1.0 — 2026-09-24
+
+- Add a short project launcher and agent-first find/get/put/check interface. Existing assetctl commands remain available.
+- Fuse bounded candidate discovery and usage checks; add collision-checked short refs and field projection.
+- Default to compact bounded replies, summary-only batch acknowledgements, stdin JSONL and pageable historical receipts.
+- Keep safety fields intact or fail closed when the response budget cannot fit them.
+- Preserve review/revision for timestamp-only changes; cache verified file signatures, not authorization decisions.
+- Verify declared cross-card dependencies with node/depth/file limits and cycle detection, including legacy resolve.
+- Add byte-budget/safety/launcher/receipt tests and a reproducible visible-token transcript comparison with v1.0.0.
+- No new runtime dependency, LLM call, telemetry, cloud service, hook auto-installation or license policy is introduced.
+
 ## 1.0.0 — 2026-09-24
 
 Stable local-workspace release. Add multi-project profile detection, original-path capture, JSONL batches, stat-based no-op capture, bounded find, native usage resolution, Git-scoped inventory, omission/integrity gate, diagnostics and metadata backups. Preserve schema 1 and all existing low-level CLI operations.

@@ -99,6 +99,10 @@ def install(args: argparse.Namespace) -> dict[str, Any]:
             updated = merge_block(previous.decode("utf-8"), body, start, end).encode("utf-8")
             if previous != updated:
                 entries[path] = updated
+        import launcher
+        command = launcher.plan(root, relative)
+        if command:
+            entries[command[0]] = command[1]
     plan: dict[str, Any] = {
         "ok": True, "dry_run": args.dry_run, "client": args.client,
         "project": str(root), "skill_path": relative,

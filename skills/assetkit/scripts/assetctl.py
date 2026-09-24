@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""AssetKit 1.0.0: local-first asset workflows for coding agents, Python 3.10+."""
+"""AssetKit 1.1.0: local-first asset workflows for coding agents, Python 3.10+."""
 from __future__ import annotations
 import argparse
 import contextlib
@@ -106,9 +106,15 @@ def config(root: Path) -> dict:
 def requests(args: argparse.Namespace) -> list[dict]:
     if args.batch and args.paths: ledger.fail('Use paths or --batch, not both')
     if args.batch:
-        p=Path(args.batch)
-        if p.stat().st_size>512*1024: ledger.fail('BATCH_LIMIT: request file exceeds 512 KiB')
-        values=[json.loads(line) for line in p.read_text(encoding='utf-8').splitlines() if line.strip()]
+        if args.batch == '-':
+            payload = sys.stdin.buffer.read(512*1024+1)
+            if len(payload)>512*1024: ledger.fail('BATCH_LIMIT: stdin exceeds 512 KiB')
+            text = payload.decode('utf-8')
+        else:
+            p=Path(args.batch)
+            if p.stat().st_size>512*1024: ledger.fail('BATCH_LIMIT: request file exceeds 512 KiB')
+            text=p.read_text(encoding='utf-8')
+        values=[json.loads(line) for line in text.splitlines() if line.strip()]
     else:
         defaults={k:v for k,v in vars(args).items() if k in REQUEST_FIELDS and v is not None}
         values=[{**defaults,'path':path} for path in args.paths]

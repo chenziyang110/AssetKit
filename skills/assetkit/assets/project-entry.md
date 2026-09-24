@@ -1,6 +1,2 @@
-## 项目资产协议
-
-涉及游戏、Web、App、客户端或数据项目的可复用资源时，先读 `{{SKILL_PATH}}/SKILL.md`，只加载当前操作需要的手册。
-创建前用 find 检索，使用前 resolve 检查限制与原生引用；已知成果直接 capture 原有路径并写一句用途，不逐项手填大卡片。
-保持原工程目录、命名、引擎 sidecar 和引用；不要为了整理而搬动资源。元数据修改携带 revision，不读取或重写全量账本。
-项目数据存于根目录 `.assets/`，不存入 Skill。未知来源和许可保留 candidate；有失败或阻塞必须报告，不能宣称已完成。
+## AssetKit
+For reusable documents, media, models and project resources, read `{{SKILL_PATH}}/SKILL.md` once when needed. Use `python .assets/ak.py`; preserve native paths, search before creating, register retained outputs. Never load the whole ledger or invent reuse approval. Unrelated code/cache tasks need no AssetKit calls.

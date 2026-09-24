@@ -1,3 +1,9 @@
+# Low-context entry (1.1)
+
+After skills CLI installation, run `python <SKILL_DIR>/scripts/bootstrap.py --project <PROJECT_ROOT> --entry AGENTS.md` (or CLAUDE.md/both). It also creates `.assets/ak.py`, so normal commands are `python .assets/ak.py find/get/put/check` from the project root. Re-run bootstrap after upgrading 1.0 or changing the installation location. Existing cards/configuration remain untouched. Modified launchers are not overwritten; global installations still need a real reachable Skill path on each machine.
+
+This is a generated entry point, not a tokenizer, service or hook. Do not inspect all project types or reread this guide on every task. [Agent contract](agent-api.md) covers exceptional options and detailed receipts.
+
 # 安装、项目接入与存量迁移
 
 > 1.0 保留 schema 1；无破坏性迁移。新项目请同时了解 [项目适配](projects.md) 和 [运行契约](runbook.md)，不要求先盘点全仓。

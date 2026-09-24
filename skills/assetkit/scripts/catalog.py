@@ -18,7 +18,7 @@ import zipfile
 import ledger as db
 import profiles
 
-VERSION = '1.0.0'
+VERSION = '1.1.0'
 DDL = '''
 CREATE TABLE IF NOT EXISTS assetkit_meta(key TEXT PRIMARY KEY, value TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS assetkit_files(
@@ -195,29 +195,48 @@ def capture_one(root: Path, conn: sqlite3.Connection, config: dict, request: dic
     if purpose is not None: db.text(purpose,'use',120)
     expected = request.get('expect_revision')
     if expected is not None and (not old or old['revision']!=expected): db.fail('REVISION_CONFLICT: inspect current id/revision')
-    same = old and {f['path'] for f in files} == {f['path'] for f in old['files']}
-    if same:
-        same = all(f.get('stat') == signature(safe_file(root,f['path'])) for f in old['files'])
+    import verification
+    same_members = old and {f['path'] for f in files} == {f['path'] for f in old['files']}
+    same = same_members and all(
+        f.get('stat') == signature(safe_file(root, f['path'])) or
+        verification.cached(conn, f['path'], f['sha256'], signature(safe_file(root, f['path'])))
+        for f in old['files'])
     metadata_change = old and ((purpose is not None and purpose != old['summary']) or
                      (request.get('source_kind','unknown') != 'unknown' and (request.get('source_kind') != old['source']['kind'] or request.get('source_ref') != old['source'].get('ref'))) or
                      (request.get('license') and request['license'] != old['rights'].get('license')) or
                      any(tag not in old.get('tags',[]) for tag in request.get('tags',[])))
     if same and not metadata_change:
         return {**db.result_card(old),'action':'unchanged','bytes_hashed':0}
-    if old and expected is None:
+    if old and metadata_change and expected is None:
         return {'ok':False,'id':old['id'],'revision':old['revision'],'code':'REVISION_REQUIRED',
                 'next':'capture this path with --expect-revision '+str(old['revision'])}
-    if old and old.get('content_mode','snapshot')!='live': db.fail('IMMUTABLE_SNAPSHOT: create a new version at a different path')
-    size = sum(safe_file(root,f['path']).stat().st_size for f in files)
-    if budget[0]>=0 and size>budget[0]: db.fail('HASH_BUDGET: use a manifest/index entry or explicitly raise --hash-budget-mib; no asset was read')
+    size = 0 if same else sum(safe_file(root,f['path']).stat().st_size for f in files)
+    if budget[0]>=0 and size>budget[0]: db.fail('HASH_BUDGET: use a manifest/index entry or explicitly raise --hash-budget-mib')
     if budget[0]>=0: budget[0]-=size
     inspected = []
     for f in files:
         before = signature(safe_file(root,f['path']))
-        actual = db.inspect_file(root,f)
+        if same:
+            actual = dict(next(v for v in old['files'] if v['path']==f['path']))
+        else:
+            actual = db.inspect_file(root,f)
         if signature(root/f['path']) != before: db.fail('CONTENT_RACE: file changed during capture')
         actual['stat'] = before
         inspected.append(actual)
+        verification.remember(conn, f['path'], actual['sha256'], before)
+    # Checkout/touch is not a content change. Retain the authoritative card and
+    # its approval. Fresh local signatures live only in the rebuildable cache.
+    equal_hashes = same_members and all(
+        next(v['sha256'] for v in inspected if v['path']==f['path']) == f['sha256']
+        for f in old['files'])
+    if equal_hashes and not metadata_change:
+        conn.commit()
+        return {**db.result_card(old),'action':'unchanged','bytes_hashed':size}
+    if old and expected is None:
+        conn.commit()
+        return {'ok':False,'id':old['id'],'revision':old['revision'],'code':'REVISION_REQUIRED',
+                'next':'capture this path with --expect-revision '+str(old['revision'])}
+    if old and old.get('content_mode','snapshot')!='live': db.fail('IMMUTABLE_SNAPSHOT: create a new version at a different path')
     if old:
         card = dict(old)
         card.update(revision=old['revision']+1, updated_at=db.stamp(), status='candidate',files=inspected)
@@ -305,33 +324,24 @@ def find(conn: sqlite3.Connection, args: argparse.Namespace) -> dict:
 
 
 def resolve(root: Path, card: dict, args: argparse.Namespace) -> dict:
+    """Legacy-shaped response with bounded cross-card dependency verification."""
+    import verification
     if not 1<=args.limit<=20 or args.offset<0: db.fail('PAGE_LIMIT')
-    files, problems = card['files'], []
-    checked=0
-    for f in files:
-        try:
-            p=safe_file(root,f['path'])
-            if not p.is_file(): problems.append('missing: '+f['path']); continue
-            if args.verify=='hash':
-                actual=db.inspect_file(root,{'path':f['path'],'role':f['role']})
-                checked+=1
-                if actual['sha256']!=f['sha256']: problems.append('hash mismatch: '+f['path'])
-            elif f.get('stat')!=signature(p): problems.append('stat changed or absent; hash verification required: '+f['path'])
-        except (db.AssetError,OSError) as exc: problems.append(str(exc))
-    primary=next(f['path'] for f in files if f['role']=='primary')
-    native=profiles.hints(root,primary,card.get('source',{}).get('project',{}).get('profile')) if not problems else {'dependency_scope':'not evaluated while files are stale/missing'}
-    if native.get('import_required'): problems.append(native['import_required'])
-    if native.get('unmaterialized'): problems.append('payload not verified: '+native['unmaterialized'])
-    if card['status']!='ready': problems.append('asset status is '+card['status']+'; review source and rights before reuse')
-    if card['rights']['status']=='unknown': problems.append('usage rights are unknown')
-    selected=files[args.offset:args.offset+args.limit]
-    return {'ok':args.intent=='inspect' or not problems,'id':card['id'],'revision':card['revision'],
-            'usable':not problems, 'intent':args.intent,'path':primary,'use':card['summary'],
+    result = verification.evaluate(root, card, args.verify)
+    files = card['files']
+    selected = files[args.offset:args.offset+args.limit]
+    primary = next(f['path'] for f in files if f['role']=='primary')
+    return {'ok':args.intent=='inspect' or result['usable'],'id':card['id'],'revision':card['revision'],
+            'usable':result['usable'], 'intent':args.intent,'path':primary,'use':card['summary'],
             'restrictions':card.get('restrictions',[]),'rights':card['rights'],'source':card['source'],
-            'native':native,'verification':args.verify,'hashed_files':checked,
+            'native':result['native'],'verification':args.verify,'hashed_files':result['hashed_files'],
             'files':[{'path':v['path'],'role':v['role']} for v in selected], 'file_count':len(files),
             'next_offset':args.offset+len(selected) if args.offset+len(selected)<len(files) else None,
-            'blocker_count':len(problems),'blockers':problems[:5], 'data_is_untrusted':True}
+            'blocker_count':result['issue_count'], 'blockers':[v['code']+': '+v['id']+(' '+v['path'] if v.get('path') else '') for v in result['issues'][:5]],
+            'dependency_count':max(0,len(result['nodes'])-1),'dependencies_complete':result['complete'],
+            'dependency_constraints':[{'id':n['id'],'rights':n['rights'],'restrictions':n.get('restrictions',[])}
+                                      for n in result['nodes'][1:]],
+            'data_is_untrusted':True}
 
 
 def scan(root: Path, conn: sqlite3.Connection, config: dict, args: argparse.Namespace) -> dict:

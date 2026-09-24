@@ -23,6 +23,6 @@ class ReleaseTests(unittest.TestCase):
                 self.assertIn('assetkit/scripts/profiles.py',names)
                 self.assertEqual(sum(n.endswith('/SKILL.md') for n in names),1)
                 self.assertFalse(any('/.assets/' in n or '__pycache__' in n for n in names))
-    def test_versions_match(self): self.assertEqual(module.version(),'1.0.0')
+    def test_versions_match(self): self.assertEqual(module.version(),'1.1.0')
 
 if __name__=='__main__': unittest.main()

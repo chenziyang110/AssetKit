@@ -57,8 +57,30 @@ jobs:
         run: python tools/smoke_skills_cli.py --source "$GITHUB_REPOSITORY" --cli-version "${{ matrix.cli }}"
       - name: Exercise a bounded synthetic benchmark
         run: python tools/benchmark.py --records 1000 --runs 3
+  context-budget:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PYTHONUTF8: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+      - name: Install development-only reference tokenizer
+        run: python -m pip install tiktoken==0.12.0
+      - name: Compare actual visible transcripts with v1.0.0
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/assetkit-v1"
+          git archive 29dc7a762e9cfca7cbb48bc2ed6b08f70c7ceae5 | tar -x -C "$RUNNER_TEMP/assetkit-v1"
+          python tools/context_benchmark.py --baseline "$RUNNER_TEMP/assetkit-v1" --tokenizers
   release:
-    needs: [test, skills-cli]
+    needs: [test, skills-cli, context-budget]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'chenziyang110/AssetKit'
     runs-on: ubuntu-latest
     timeout-minutes: 5

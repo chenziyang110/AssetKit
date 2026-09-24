@@ -1,5 +1,12 @@
 # Operating AssetKit 1.x
 
+## 1.1 low-context operation
+
+Bootstrap supplies `.assets/ak.py`. Prefer one `find` (checked candidates), one direct `get` for a known reference/path, and one `put` batch for known retained outputs. Integrate `check` at task/commit boundaries, not per file. The detailed v1 CLI remains available. Read [agent contract](agent-api.md) only when its exceptional options are needed.
+
+Declared cross-card depends_on edges are now verified with bounded traversal and cycle detection. Neither compact nor legacy resolve claims full engine dependency discovery. Verified byte-identical timestamp changes retain the original card/review; fresh local stat evidence is cached separately. Explicit hash verification bypasses this cache. Short refs remain resolvable after context compaction/reindex; fresh results are never suppressed because a previous model context allegedly saw them.
+
+
 ## Supported deployment contract
 
 A trusted local filesystem, Python 3.10+, and optional Git. Multiple cooperating local agent processes serialize metadata mutations with an OS advisory lock. Each authoritative card is atomically replaced and flushed; SQLite is derived. This is **not** a multi-host database, hostile-workspace sandbox, remote object store, native engine plugin or service with an uptime SLA. Do not place a shared SQLite catalog on NFS/SMB or let multiple machines concurrently mutate the same working directory. Use independent Git checkouts and normal reviewed merges instead.
@@ -8,7 +15,7 @@ Skill installations, business source files and project records have separate lif
 
 ## Everyday operation
 
-Bootstrap each project once. Reconcile once per session/after external merges. For known task outputs capture exact paths; avoid whole-project scans. Before commit, run `scan --since HEAD` to inspect omissions, then opt in to capture the relevant new files. Never mass-register a vendor library simply because it contains supported extensions.
+Bootstrap each project once. Fold reconciliation into `find --fresh` after external edits/merges or when resuming uncertain state; do not add a separate sync before every operation. For known task outputs capture exact paths; avoid whole-project scans. Before commit, run `scan --since HEAD` to inspect omissions, then opt in to capture the relevant new files. Never mass-register a vendor library simply because it contains supported extensions.
 
 A commit check can run:
 
@@ -32,7 +39,7 @@ After moving a live asset with its native owning tool, registration at the old p
 
 The authoritative card schema stays at version 1. Existing IDs, records, request keys and source paths are retained; there is no destructive migration. Capture optionally adds file `stat` signatures and observed `source.project` context. Old cards without stat signatures remain valid; use hash verification on first reuse/capture in a new checkout. Derived auxiliary index tables are created on demand and can be rebuilt.
 
-The `assetctl.py` entrypoint remains stable. `ledger.py` is the preserved compatibility backend, not a second supported user CLI. Legacy commands retain their behavior and full-reconciliation cost. New integrations should use `capture`, `find` and `resolve`. Stricter exclusions for obvious secrets, generated/tool files and linked metadata/assets are deliberate safety changes.
+The `assetctl.py` entrypoint remains stable. `ledger.py` is the preserved compatibility backend, not a second supported user CLI. Legacy commands retain their behavior and full-reconciliation cost. New Agent integrations should use `.assets/ak.py`; the detailed `capture`, `find` and `resolve` interfaces remain supported. Stricter exclusions for obvious secrets, generated/tool files and linked metadata/assets are deliberate safety changes.
 
 ## Release acceptance and limitations
 
