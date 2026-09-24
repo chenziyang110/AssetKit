@@ -1,0 +1,13 @@
+{
+  "fixture_records": 10000,
+  "runs": 10,
+  "python": "3.13.5",
+  "platform": "Linux",
+  "cold_find_ms": 1467.01,
+  "warm_find_p50_ms": 67.59,
+  "warm_find_p95_ms": 74.95,
+  "legacy_search_p50_ms": 185.77,
+  "warm_response_bytes": 1224,
+  "warm_record_files_read": 0,
+  "scope": "Synthetic tiny records sharing one small file; includes interpreter startup. Not an engine benchmark, production SLA, or model-token benchmark."
+}

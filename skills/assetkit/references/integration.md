@@ -1,5 +1,8 @@
 # 安装、项目接入与存量迁移
 
+> 1.0 保留 schema 1；无破坏性迁移。新项目请同时了解 [项目适配](projects.md) 和 [运行契约](runbook.md)，不要求先盘点全仓。
+
+
 Skill 本体和项目状态分开：安装目录放 SKILL.md、手册和脚本；目标项目根目录存 `.assets/`。
 全局安装尤其必须显式指定项目根目录，不得把不同项目的记录混进全局技能目录。
 
@@ -63,6 +66,6 @@ python <已下载SKILL_DIR>/scripts/install.py --project <PROJECT_ROOT> --client
 ## 检查与恢复
 
 项目提交检查可运行 `python <SKILL_DIR>/scripts/assetctl.py --root <PROJECT_ROOT> validate --hashes --max-issues 20`。
-这只检查卡片与 managed_roots。要发现全仓乱放资源，还需审查 Git 新增文件与允许路径；当前 CLI 不自带该门禁。
+validate 只检查卡片与 managed_roots。1.0 另提供 `gate --since <基线提交>`，按 discovery 策略检查 Git 变更中的漏登记，以及已登记文件的缺失/陈旧；实际接入见 [运行手册](runbook.md)。
 索引损坏用 reindex；卡片与业务文件从版本控制/备份恢复，不能把缓存当唯一备份。
-多机高并发、对象存储、LFS/DVC、自动媒体预览和向量索引需要另行集成，当前版本未实现。
+多机高并发、对象存储、自动媒体预览和向量索引需要另行集成。1.0 识别 LFS/DVC 指针但不自动拉取真实载荷。

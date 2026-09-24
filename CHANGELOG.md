@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0 — 2026-09-24
+
+Stable local-workspace release. Add multi-project profile detection, original-path capture, JSONL batches, stat-based no-op capture, bounded find, native usage resolution, Git-scoped inventory, omission/integrity gate, diagnostics and metadata backups. Preserve schema 1 and all existing low-level CLI operations.
+
+Add explicit CPU/I/O/context budgets, custom discovery policy, known sidecar/glTF/image-set grouping, pointer awareness, stricter metadata/asset-path safety and recovery tests. Publish the measured synthetic benchmark, operating contract, contribution/security policies and release packaging workflow. Native engine runtime certification and distributed services are explicitly outside this release.
+
+
 ## 0.3.0 — 2026-09-24
 
 - Make `npx skills add chenziyang110/AssetKit --skill assetkit` the primary install path.

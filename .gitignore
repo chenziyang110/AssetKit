@@ -5,3 +5,4 @@ __pycache__/
 /.work/
 /dist/
 .DS_Store
+dist/

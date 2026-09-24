@@ -1,43 +1,96 @@
-name: AssetKit tests
+name: AssetKit quality and release
 on:
   push:
   pull_request:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: assetkit-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   test:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         python: ['3.10', '3.13']
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
     env:
       PYTHONUTF8: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ matrix.python }}
       - run: python -m unittest discover -s tests -v
   skills-cli:
+    strategy:
+      fail-fast: false
+      matrix:
+        cli: ['1.7.0', 'latest']
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
       PYTHONUTF8: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
       DISABLE_TELEMETRY: '1'
       DO_NOT_TRACK: '1'
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: '22'
-      - name: Discover, install and exercise checked-out skill using real CLI
-        run: python tools/smoke_skills_cli.py --source "$GITHUB_WORKSPACE"
-      - name: Verify public owner/repo install command
+      - name: Discover, install and exercise checked-out skill
+        run: python tools/smoke_skills_cli.py --source "$GITHUB_WORKSPACE" --cli-version "${{ matrix.cli }}"
+      - name: Verify public owner/repo installation
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: python tools/smoke_skills_cli.py --source "$GITHUB_REPOSITORY"
+        run: python tools/smoke_skills_cli.py --source "$GITHUB_REPOSITORY" --cli-version "${{ matrix.cli }}"
+      - name: Exercise a bounded synthetic benchmark
+        run: python tools/benchmark.py --records 1000 --runs 3
+  release:
+    needs: [test, skills-cli]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'chenziyang110/AssetKit'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+      - name: Build reproducible release archives
+        run: python tools/build_release.py
+      - name: Publish new stable version without replacing existing releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(cat VERSION)"
+          tag="v${version}"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release ${tag} already exists; immutable release contents left unchanged."
+            exit 0
+          fi
+          remote_head="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/main" --jq '.object.sha')"
+          test "$remote_head" = "$GITHUB_SHA"
+          if gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${tag}" >/dev/null 2>&1; then
+            echo "Tag already exists without a release; review it manually rather than attaching different artifacts."
+            exit 1
+          fi
+          gh release create "$tag" dist/*.zip dist/SHA256SUMS \
+            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --title "AssetKit ${version}" --notes-file "docs/releases/${tag}.md"

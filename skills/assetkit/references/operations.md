@@ -1,5 +1,8 @@
 # 登记、更新、审核与版本
 
+> 1.0 日常路径：优先 `find → resolve → capture`，参见 [快速流程](workflows.md)。下文的 `search/add` 是保留的低层操作。原生工程路径优先于受管导出命名规则；capture 默认原位登记。
+
+
 `.assets/records/<id>.json` 是元数据事实源；`.assets/cache/catalog.sqlite` 可删除重建。
 通过 CLI 更新卡片。不要手工维护数据库或另造全量总表。Git 审查、合并卡片后由工具同步索引。
 

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Project asset card v1",
+  "title": "AssetKit asset card — stable schema 1",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -150,6 +150,21 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 1000
+        },
+        "project": {
+          "type": "object",
+          "description": "Observed project context; not verified engine compatibility.",
+          "properties": {
+            "profile": {
+              "type": "string"
+            },
+            "scope": {
+              "type": "string"
+            },
+            "evidence": {
+              "type": "string"
+            }
+          }
         }
       }
     },
@@ -216,6 +231,35 @@
           "mime": {
             "type": "string",
             "minLength": 1
+          },
+          "stat": {
+            "type": "object",
+            "description": "Optional capture-time local stat signature; optimization only, not a cryptographic proof. Recomputed after copy/checkout or content changes.",
+            "required": [
+              "size",
+              "mtime_ns",
+              "ctime_ns",
+              "device",
+              "inode"
+            ],
+            "properties": {
+              "size": {
+                "type": "integer"
+              },
+              "mtime_ns": {
+                "type": "integer"
+              },
+              "ctime_ns": {
+                "type": "integer"
+              },
+              "device": {
+                "type": "integer"
+              },
+              "inode": {
+                "type": "integer"
+              }
+            },
+            "additionalProperties": false
           }
         }
       },
