@@ -385,8 +385,9 @@ def gate(root: Path, conn: sqlite3.Connection, args: argparse.Namespace, config:
             if not p.is_file():
                 errors.append({'id':card['id'],'path':f['path'],'code':'MISSING'}); changed=True
             elif f.get('stat')!=signature(p):
-                checked+=1; changed=True
+                checked+=1
                 if db.inspect_file(root,{'path':f['path'],'role':f['role']})['sha256']!=f['sha256']:
+                    changed=True
                     errors.append({'id':card['id'],'path':f['path'],'code':'STALE_CONTENT'})
         if args.ready and changed and card['status']!='ready': errors.append({'id':card['id'],'code':'NOT_READY'})
     return {'ok':not errors,'error_count':len(errors),'errors':errors[:20],'truncated':len(errors)>20,

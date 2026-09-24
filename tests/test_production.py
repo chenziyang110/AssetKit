@@ -170,6 +170,15 @@ class ProductionTests(unittest.TestCase):
         self.file('public/new.png','mutated')
         result=self.call('gate',ok=False)
         self.assertTrue(any(v['code']=='STALE_CONTENT' for v in result['errors']))
+    def test_gate_ready_ignores_stat_only_changes_after_checkout(self):
+        a=self.cap(); self.repo()
+        p=self.root/'.assets/records'/f"{a['id']}.json"
+        card=json.loads(p.read_text())
+        card['files'][0]['stat']['mtime_ns']=0
+        p.write_text(json.dumps(card),encoding='utf-8')
+        result=self.call('gate','--ready')
+        self.assertGreater(result['hashed_files'],0)
+        self.assertEqual(result['error_count'],0)
     def test_git_nested_root_paths(self):
         self.repo(); self.file('apps/web/public/old.png'); self.git('add','.'); self.git('commit','-m','web baseline')
         outer=self.root; self.root=outer/'apps/web'
