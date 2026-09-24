@@ -100,6 +100,17 @@ def main() -> None:
             if search["total"] != 1 or search["items"][0]["id"] != added["id"]:
                 raise RuntimeError("Installed CLI failed Chinese discovery")
             run([*tool, "validate", "--hashes"], project)
+            short = [sys.executable, "-B", "-S", str(project / ".assets/ak.py")]
+            checked = json.loads(run([*short, "find", "首页"], project))
+            if len(checked["items"]) != 1 or checked["items"][0]["usable"]:
+                raise RuntimeError("Short launcher must discover but not approve the candidate")
+            ref = checked["items"][0]["ref"]
+            single = json.loads(run([*short, "get", ref, "--fields", "id"], project))
+            if single["fields"]["id"] != added["id"]:
+                raise RuntimeError("Short reference resolved the wrong asset")
+            unchanged = json.loads(run([*short, "put", "notes.md"], project))
+            if unchanged.get("action") != "unchanged":
+                raise RuntimeError("Byte-identical legacy asset must remain unchanged")
             if files(codex) != before or (codex / ".assets").exists():
                 raise RuntimeError("Project operations wrote into the installed skill")
             results.append({"mode": mode, "ok": True, "claude_symlink": claude.is_symlink()})

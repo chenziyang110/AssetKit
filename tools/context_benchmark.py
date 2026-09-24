@@ -142,9 +142,13 @@ def main():
     if counters:
         for name,count in counters.items():
             skill=(ROOT/'skills/assetkit/SKILL.md').read_text(encoding='utf-8')
-            assert count(skill)<=850, f'{name}: Skill file exceeded activation token budget'
-            assert result['static']['v1.1.0']['routing_description']['tokens'][name]<=90
-            assert result['static']['v1.1.0']['project_entry']['tokens'][name]<=90
+            assert count(skill)<=700, f'{name}: Skill file exceeded activation token budget'
+            assert result['static']['v1.1.0']['routing_description']['tokens'][name]<=70
+            assert result['static']['v1.1.0']['project_entry']['tokens'][name]<=80
+            for task, metrics in result['scenarios'].items():
+                before=metrics['v1.0.0']['tokens'][name]['visible_total']
+                after=metrics['v1.1.0']['tokens'][name]['visible_total']
+                assert after<=before*0.4, f'{name}: {task} exceeded 40% of baseline visible tokens'
     output=json.dumps(result,ensure_ascii=False,indent=2)+'\n'
     if args.output:
         args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(output,encoding='utf-8')

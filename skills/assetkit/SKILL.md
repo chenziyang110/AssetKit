@@ -1,6 +1,6 @@
 ---
 name: assetkit
-description: Find, reuse and register project assets: documents, images, audio, video, models and game/Web/App resources. Use before creating assets and after retaining outputs; not for ordinary code, caches or package management. 项目资产检索、复用、增量入库。
+description: Find, reuse and register project assets including documents, images, audio, video, models and game/Web/App resources. Use before creating assets and after retaining outputs; not for ordinary code, caches or package management. 项目资产检索、复用、增量入库。
 compatibility: Python 3.10+; Git for change checks. Local files, no model API.
 metadata:
   author: chenziyang110
