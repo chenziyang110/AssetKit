@@ -44,7 +44,7 @@ class BootstrapTests(unittest.TestCase):
         self.assertEqual(snapshot(self.package), before)
         self.assertFalse((self.package / ".assets").exists())
         self.assertTrue((self.root / "AGENTS.md").read_bytes().startswith(b"# Existing\r\nKeep this.\r\n"))
-        self.assertIn(self.package.as_posix(), (self.root / "CLAUDE.md").read_text(encoding="utf-8"))
+        self.assertIn(self.package.resolve().as_posix(), (self.root / "CLAUDE.md").read_text(encoding="utf-8"))
         config = (self.root / ".assets/config.json").read_bytes()
         (self.root / ".assets/records/keep.txt").write_text("preserve this record", encoding="utf-8")
         again = self.call("--entry", "both")

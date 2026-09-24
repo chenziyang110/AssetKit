@@ -63,7 +63,9 @@ def main() -> None:
             options = ["--copy"] if mode == "project-copy" else (["--global"] if mode == "global-default" else [])
             run([*cli, "add", args.source, "--skill", "assetkit", "--agent", "codex", "claude-code", "--yes", *options], project)
             if mode == "global-default":
-                codex = home / ".codex/skills/assetkit"
+                # Universal-agent installs use the canonical directory in CLI 1.7.0.
+                candidates = [home / ".agents/skills/assetkit", home / ".codex/skills/assetkit"]
+                codex = next((p for p in candidates if (p / "SKILL.md").is_file()), candidates[0])
                 claude = home / ".claude/skills/assetkit"
             else:
                 codex = project / ".agents/skills/assetkit"
