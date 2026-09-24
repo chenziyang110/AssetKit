@@ -1,0 +1,41 @@
+{
+  "type": "document",
+  "domain": "commerce",
+  "logical_key": "commerce/payment-flow",
+  "content_mode": "snapshot",
+  "content_version": 1,
+  "title": "支付流程说明（演示）",
+  "summary": "演示资产登记的简短支付流程文档，不代表真实项目实现。",
+  "use_when": [
+    "测试文档资产的登记、检索和局部更新流程"
+  ],
+  "restrictions": [
+    "仅用于工具演示，不能作为真实业务设计依据。"
+  ],
+  "tags": [
+    "支付",
+    "checkout",
+    "流程"
+  ],
+  "aliases": [
+    "收银台流程",
+    "payment flow"
+  ],
+  "files": [
+    {
+      "path": "assets/document/commerce/payment-flow/v001/payment-flow--main--v001.md",
+      "role": "primary"
+    }
+  ],
+  "source": {
+    "kind": "authored",
+    "ref": "AssetKit Skill: assets/payment-flow.sample.md (demonstration)"
+  },
+  "rights": {
+    "status": "unknown",
+    "license": "unknown",
+    "note": "演示默认保持 candidate；实际复用前按项目规则确认。"
+  },
+  "storage_policy": "managed",
+  "status": "candidate"
+}

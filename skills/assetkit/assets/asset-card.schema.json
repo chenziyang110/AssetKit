@@ -1,0 +1,355 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project asset card v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "revision",
+    "logical_key",
+    "content_version",
+    "type",
+    "domain",
+    "title",
+    "summary",
+    "use_when",
+    "status",
+    "storage_policy",
+    "source",
+    "rights",
+    "files",
+    "created_at",
+    "updated_at",
+    "request_key",
+    "request_fingerprint"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^ast_[0-9a-f]{32}$"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "logical_key": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:[-/][a-z0-9]+)*$",
+      "maxLength": 160
+    },
+    "content_mode": {
+      "enum": [
+        "snapshot",
+        "live"
+      ],
+      "default": "snapshot"
+    },
+    "content_version": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "type": {
+      "enum": [
+        "document",
+        "image",
+        "video",
+        "audio",
+        "model-3d",
+        "model-ml",
+        "dataset",
+        "design",
+        "template",
+        "other"
+      ]
+    },
+    "domain": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 240
+    },
+    "use_when": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      },
+      "minItems": 1
+    },
+    "restrictions": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      }
+    },
+    "tags": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 48
+      }
+    },
+    "aliases": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 80
+      }
+    },
+    "status": {
+      "enum": [
+        "candidate",
+        "ready",
+        "deprecated",
+        "archived"
+      ]
+    },
+    "storage_policy": {
+      "enum": [
+        "managed",
+        "in-place"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "authored",
+            "generated",
+            "uploaded",
+            "imported",
+            "unknown"
+          ]
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      }
+    },
+    "rights": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "unknown",
+            "cleared",
+            "restricted"
+          ]
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 1000
+        }
+      }
+    },
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 512,
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "role",
+          "sha256",
+          "bytes"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "enum": [
+              "primary",
+              "source",
+              "preview",
+              "transcript",
+              "config",
+              "dependency",
+              "readme"
+            ]
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "mime": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "contains": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "const": "primary"
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "relations": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "required": [
+          "type",
+          "id"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "derived_from",
+              "supersedes",
+              "depends_on"
+            ]
+          },
+          "id": {
+            "type": "string",
+            "pattern": "^ast_[0-9a-f]{32}$"
+          }
+        }
+      }
+    },
+    "reviewed_by": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "review_evidence": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "created_at": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "updated_at": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "request_key": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "request_fingerprint": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "content_mode": {
+            "const": "live"
+          }
+        },
+        "required": [
+          "content_mode"
+        ]
+      },
+      "then": {
+        "properties": {
+          "content_version": {
+            "const": 0
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "content_version": {
+            "minimum": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "ready"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "reviewed_by",
+          "review_evidence"
+        ],
+        "properties": {
+          "source": {
+            "properties": {
+              "kind": {
+                "not": {
+                  "const": "unknown"
+                }
+              }
+            }
+          },
+          "rights": {
+            "properties": {
+              "status": {
+                "not": {
+                  "const": "unknown"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$comment": "CLI 另检验路径安全、动态命名、文件存在、大小和指纹、关系目标，以及 64 KiB 记录上限。此 schema 不是新增请求 schema。"
+}

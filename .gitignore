@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+/.assets/cache/
+/.assets/.lock
+/.work/
+/dist/
+.DS_Store

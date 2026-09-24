@@ -1,0 +1,4 @@
+interface:
+  display_name: "AssetKit"
+  short_description: "Find, register, and reuse project assets safely"
+  default_prompt: "使用 $assetkit 先检索项目现有资产，再按规范登记或增量更新本次可复用资源。"
