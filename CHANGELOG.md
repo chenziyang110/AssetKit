@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0 — 2026-09-24
+
+- Make `npx skills add chenziyang110/AssetKit --skill assetkit` the primary install path.
+- Preserve the Anthropic-style `skills/assetkit/SKILL.md` layout and add optional marketplace grouping.
+- Add an independent bootstrap command for default symlink, copy and global installations; do not rewrite installed skills.
+- Keep legacy offline copy installation for compatibility. Preserve project state and existing entry rules.
+- Add eight bootstrap/packaging tests and real skills CLI discovery/install/ledger smoke tests in CI.
+- Document installation versus initialization versus skills.sh leaderboard indexing.
+
+
 ## 0.2.0
 
 - 将原资产规范包封装为独立的 `assetkit` Agent Skill。

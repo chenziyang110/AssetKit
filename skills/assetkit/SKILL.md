@@ -3,7 +3,7 @@ name: assetkit
 description: 管理和复用项目资源资产。当任务涉及文档、图片、视频、音频、3D/机器学习模型、数据集、设计稿、模板的查找、生成、下载、导入、引用、修改或归档时使用；尤其在创建新资源前先检索现有资产，完成后增量登记。适用于资产整理、素材复用、资源命名和资产账本维护；不用于普通代码编辑、临时缓存或依赖包管理。Manage reusable project assets with progressive discovery and incremental records.
 compatibility: Requires Python 3.10+, local filesystem access, and permission to run scripts. No network or third-party Python packages required. Use one trusted local workspace; not a distributed asset service.
 metadata:
-  version: "0.2.0"
+  version: "0.3.0"
 ---
 
 # AssetKit
@@ -40,7 +40,9 @@ metadata:
 ## 3. 先发现已有资产
 
 检查 `.assets/config.json` 是否存在。纯查找任务遇到未初始化账本时，说明“尚无资产索引”，
-不要把它等同于“项目没有文件”，也不要擅自批量建库。项目接入或获准写入时才执行 `init`。
+不要把它等同于“项目没有文件”，也不要擅自批量建库。项目接入或获准写入时，先读接入手册，
+通过 `scripts/bootstrap.py --project <PROJECT_ROOT> --entry <实际项目入口>` 初始化。
+`skills add` 只负责安装；首次使用的项目接入独立执行，不复制或改写已安装 Skill，支持符号链接和全局安装。
 
 ```bash
 python "$SKILL_DIR/scripts/assetctl.py" --root "$PROJECT_ROOT" search "任务关键词" --limit 5

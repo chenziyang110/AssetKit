@@ -21,3 +21,23 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - run: python -m unittest discover -s tests -v
+  skills-cli:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PYTHONUTF8: '1'
+      DISABLE_TELEMETRY: '1'
+      DO_NOT_TRACK: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Discover, install and exercise checked-out skill using real CLI
+        run: python tools/smoke_skills_cli.py --source "$GITHUB_WORKSPACE"
+      - name: Verify public owner/repo install command
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: python tools/smoke_skills_cli.py --source "$GITHUB_REPOSITORY"

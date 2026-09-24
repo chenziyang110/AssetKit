@@ -1,0 +1,17 @@
+{
+  "name": "assetkit-skills",
+  "owner": {"name": "chenziyang110"},
+  "metadata": {
+    "description": "Reusable project asset management for coding agents",
+    "version": "0.3.0"
+  },
+  "plugins": [
+    {
+      "name": "assetkit",
+      "description": "Discover, reuse, register and validate project assets incrementally",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/assetkit"]
+    }
+  ]
+}
